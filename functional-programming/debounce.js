@@ -14,18 +14,16 @@ function debounce(fn, waitTime, immediate) {
         }
     };
 }
-​
 function add(num, num2) {
     console.log(num + num2);
 }
-​
 const addDebounce = debounce(add, 1000);
-​
-debounce(1, 2 );
-debounce(1, 2 );
-debounce(1, 2 );
-debounce(1, 2 );
-debounce(1, 2 );
-debounce(1, 2 );
-debounce(1, 2 );
-debounce(1, 2 );
+
+debounce(1, 2);
+debounce(1, 2);
+debounce(1, 2);
+debounce(1, 2);
+debounce(1, 2);
+debounce(1, 2);
+debounce(1, 2);
+debounce(1, 2);
