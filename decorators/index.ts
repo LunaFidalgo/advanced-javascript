@@ -38,10 +38,10 @@ function ValidParameters(...decoratorArgs: any[]) {
     };
 }
 
-function ToString(target: Function){
-    target.prototype.toString = function(){
-        Object.keys(this).map(key => console.log(key, this[key]))
-    }
+function ToString(target: Function) {
+    target.prototype.toString = function() {
+        Object.keys(this).map(key => console.log(key, this[key]));
+    };
 }
 
 @ToString
@@ -59,4 +59,84 @@ class User {
 
 const myself = new User("Luna", "Fidalgo");
 
+//example fullname
 console.log(myself.toString());
+
+//example valid sum
+console.log(myself.sum(1, 2));
+
+//example invalid type
+//console.log(myself.sum(1,"a"))
+
+type validateConfig = {
+    required: boolean;
+    type: string;
+    in?: any[];
+    max?: number;
+    min?: number;
+};
+
+function Validate(config: validateConfig) {
+    return function(target: any, propertyName: string) {
+        let value: any;
+        Object.defineProperty(target, propertyName, {
+            get() {
+                return value;
+            },
+            set(newValue: any) {
+                if (config.required && !newValue) {
+                    throw new Error(`Required property: ${newValue}`);
+                }
+                if (typeof newValue !== config.type) {
+                    throw new Error(`${typeof newValue} is not ${config.type}`);
+                }
+
+                if (config.in && !config.in.find(element => element === newValue)) {
+                    throw new Error(`${newValue} is not in: ${config.in}`);
+                }
+
+                if (config.type === "number") {
+                    if (
+                        config.max !== undefined &&
+                        config.max !== null &&
+                        newValue > config.max
+                    ) {
+                        throw new Error(
+                            `${newValue} is greater than max value: ${config.max}`
+                        );
+                    }
+                    if (
+                        config.min !== undefined &&
+                        config.min !== null &&
+                        newValue < config.min
+                    ) {
+                        throw new Error(
+                            `${newValue} is lower than min value: ${config.min}`
+                        );
+                    }
+                }
+
+                return (value = newValue);
+            }
+        });
+    };
+}
+
+class Vehicle {
+    constructor(numWheels: number) {
+        this.numWheels = numWheels;
+    }
+
+    @Validate({
+        required: true,
+        type: "number",
+        //  max: 8,
+        //   min: 2,
+        in: [1,5]
+    })
+    numWheels: any;
+}
+
+const myVehicle = new Vehicle(1);
+
+console.log(myVehicle.numWheels);
